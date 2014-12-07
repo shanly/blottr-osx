@@ -1,0 +1,19 @@
+https://github.com/kickcode/NoteMeNot
+
+search "nstextview keyboard copy"
+
+http://kickcode.com/blog/2013/12/14/custom-ui-popup-panel-for-mac-os-x-status-bar-app-with-rubymotion.html
+
+
+
+https://developer.apple.com/library/mac/documentation/Carbon/Reference/QuartzEventServicesRef/index.html
+
+http://stackoverflow.com/questions/20151177/axisprocesstrustedwithoptions-unchecks-privacy-accessibility-checkbox-when-app
+
+sudo sqlite3 /Library/Application\ Support/com.apple.TCC/TCC.db "INSERT or REPLACE INTO access values ('kTCCServiceAccessibility', 'com.yourcompany.blottr', 0, 1, 0, NULL);"
+
+
+rake schema:build
+
+
+iconutil -c icns Icon.iconset
