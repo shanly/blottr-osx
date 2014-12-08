@@ -101,6 +101,11 @@ class MainWindowLayout < MotionKit::WindowLayout
     title               App.name
     styleMask           NSBorderlessWindowMask#NSTitledWindowMask
     background_color    0x999999.nscolor#NSColor.blackColor
+
+
+    setOpaque           false
+    background_color    0x999999.nscolor#NSColor.blackColor
+    alpha_value         0.5
   end
 
   def text_view_1_style
