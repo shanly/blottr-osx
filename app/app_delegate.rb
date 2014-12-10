@@ -54,4 +54,8 @@ class AppDelegate
     NSMenuItem.alloc.initWithTitle( name, action: action, keyEquivalent: keyEquivalent )
   end
 
+  def applicationDidResignActive( notification )
+    @controller.toggle_window
+  end
+
 end

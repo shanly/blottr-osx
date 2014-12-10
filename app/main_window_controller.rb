@@ -12,6 +12,10 @@ class MainWindowController < NSWindowController
 
       window.setDelegate( self )
 
+      ( 1..5 ).to_a.each do | index |
+        text_view( index ).setDelegate( self )
+      end
+
       register_hotkey
 
       load_notes

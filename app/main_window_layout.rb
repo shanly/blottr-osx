@@ -57,11 +57,11 @@ class MainWindowLayout < MotionKit::WindowLayout
 
       add_text_view( '1',
                      origin: [ DIVIDERx1, DIVIDERx1 ],
-                     size:   [ window_size.width * 0.5 - DIVIDERx2, window_size.height - DIVIDERx2 - 2 ] )
+                     size:   [ window_size.width * 0.5 - DIVIDERx2, window_size.height - DIVIDERx2 ] )
 
       add_text_view( '2',
                      origin: [ window_size.width * 0.5, window_size.height * 0.5 + DIVIDERx2 ],
-                     size:   [ window_size.width * 0.5 - DIVIDERx1, window_size.height * 0.5 - DIVIDERx3 - 2 ] )
+                     size:   [ window_size.width * 0.5 - DIVIDERx1, window_size.height * 0.5 - DIVIDERx3 ] )
 
       add_text_view( '3',
                      origin: [ window_size.width * 0.50, DIVIDERx1 ],
@@ -76,7 +76,6 @@ class MainWindowLayout < MotionKit::WindowLayout
                      size:   [ window_size.width * 0.25 - DIVIDERx1, window_size.height * 0.25 ] )
     end
   end
-
 
   def add_text_view( identifier, options )
     add NSScrollView, "text_view_#{ identifier }_scroller".to_sym do
@@ -102,10 +101,9 @@ class MainWindowLayout < MotionKit::WindowLayout
     styleMask           NSBorderlessWindowMask#NSTitledWindowMask
     background_color    0x999999.nscolor#NSColor.blackColor
 
-
     setOpaque           false
     background_color    0x999999.nscolor#NSColor.blackColor
-    alpha_value         0.5
+    alpha_value         0.75
   end
 
   def text_view_1_style
