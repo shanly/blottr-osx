@@ -164,6 +164,7 @@ class MainWindowLayout < MotionKit::WindowLayout
     selectable                    true
     automaticLinkDetectionEnabled true
     allowsUndo                    true
+    richText                      false
 
     font                          NSFont.fontWithName( 'Helvetica Neue', size: 14 )
 

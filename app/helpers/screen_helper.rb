@@ -1,7 +1,7 @@
 module ScreenHelper
 
   TITLE_HEIGHT    = 20
-  SIZE            = 0.8
+  SIZE            = 0.9
 
   def screen_width
     @screen_width ||= NSScreen.mainScreen.frame.size.width * SIZE
