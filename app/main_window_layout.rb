@@ -45,10 +45,10 @@ class MainWindowLayout < MotionKit::WindowLayout
   def window_style
     title               App.name
     styleMask           NSBorderlessWindowMask#NSTitledWindowMask
-    background_color    0x999999.nscolor
+    background_color    MyConstants::HIGHLIGHT_COLOR.nscolor
 
     setOpaque           false
-    # alpha_value         0.75
+    alpha_value         0.75
   end
 
   def text_view_scroller_styles( options = { } )
@@ -77,8 +77,6 @@ class MainWindowLayout < MotionKit::WindowLayout
   end
 
   def add_text_view( note )
-    # root ||= self.view
-
     size   = note_to_size( note )
 
     origin = note_to_origin( note )

@@ -11,4 +11,6 @@ class MyConstants
 
   FLT_MAX         = 999999999 # 3.40282347E+38
 
+  HIGHLIGHT_COLOR = 0x79d2f8
+  BORDER_COLOR    = 0x999999
 end

@@ -128,9 +128,13 @@ class MainWindowController < NSWindowController
 
     @layout.add_text_view( new_note )
 
-    self.window.highlightTextView( text_view( new_note.object_id.to_s ), 0x999999.nscolor )
+    # self.window.highlightTextView( text_view,                            0x00ff00.nscolor )
 
-    self.window.highlightTextView( text_view )
+    # text_view( new_note.object_id.to_s ).becomeFirstResponder
+    # scroller( new_note.object_id.to_s ).becomeFirstResponder
+
+    window.makeFirstResponder( text_view( new_note.object_id.to_s ) )
+    self.window.highlightTextView( text_view( new_note.object_id.to_s ) )
   end
 
   def log_layout
