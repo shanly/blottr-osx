@@ -1,20 +1,5 @@
 class MainWindowLayout < MotionKit::WindowLayout
 
-  DIVIDER         = 6
-
-  DIVIDERx1       = DIVIDER * 1
-  DIVIDERx2       = DIVIDER * 2
-  DIVIDERx3       = DIVIDER * 3
-  DIVIDERx4       = DIVIDER * 4
-
-  FLT_MAX         = 999999999 # 3.40282347E+38
-
-  view :text_view_1
-  view :text_view_2
-  view :text_view_3
-  view :text_view_4
-  view :text_view_5
-
   THEME_TEST = {
       '1' => { 'bg' => 0xFF0000, 'fg' => 0x000000 },
       '2' => { 'bg' => 0x00FF00, 'fg' => 0x000000 },
@@ -49,101 +34,21 @@ class MainWindowLayout < MotionKit::WindowLayout
       '5' => { 'bg' => 0xFFFFFF, 'fg' => 0x000000 },
   }
 
-  THEME = PLAIN_THEME
+  THEME = PISTACHIO_COLOR_THEME
 
   def layout
     root( MyWindow, :window ) do
       full_screen
-
-      add_text_view( '1',
-                     origin: [ DIVIDERx1, DIVIDERx1 ],
-                     size:   [ window_size.width * 0.5 - DIVIDERx2, window_size.height - DIVIDERx2 ] )
-
-      add_text_view( '2',
-                     origin: [ window_size.width * 0.5, window_size.height * 0.5 + DIVIDERx2 ],
-                     size:   [ window_size.width * 0.5 - DIVIDERx1, window_size.height * 0.5 - DIVIDERx3 ] )
-
-      add_text_view( '3',
-                     origin: [ window_size.width * 0.50, DIVIDERx1 ],
-                     size:   [ window_size.width * 0.25 - DIVIDERx1, window_size.height * 0.5 ] )
-
-      add_text_view( '4',
-                     origin: [ window_size.width * 0.75, DIVIDERx1 ],
-                     size:   [ window_size.width * 0.25 - DIVIDERx1, window_size.height * 0.25 - DIVIDERx1 ] )
-
-      add_text_view( '5',
-                     origin: [ window_size.width * 0.75, window_size.height * 0.25 + DIVIDERx1 ],
-                     size:   [ window_size.width * 0.25 - DIVIDERx1, window_size.height * 0.25 ] )
-    end
-  end
-
-  def add_text_view( identifier, options )
-    add NSScrollView, "text_view_#{ identifier }_scroller".to_sym do
-
-      frame [ options[ :origin ], options[ :size ] ]
-
-      add( MyTextView, "text_view_#{ identifier }".to_sym ) do
-        frame                                 [ [ 0, 0 ], options[ :size ] ]
-
-        minSize                               [ 0.0, options[ :size ][ 1 ] ]
-        maxSize                               [ FLT_MAX, FLT_MAX ]
-
-        textContainer.setContainerSize        [ options[ :size ][ 0 ], FLT_MAX ]
-        textContainer.setWidthTracksTextView  false#true
-      end
-
-      documentView get( "text_view_#{ identifier }".to_sym )
     end
   end
 
   def window_style
     title               App.name
     styleMask           NSBorderlessWindowMask#NSTitledWindowMask
-    background_color    0x999999.nscolor#NSColor.blackColor
+    background_color    0x999999.nscolor
 
     setOpaque           false
-    background_color    0x999999.nscolor#NSColor.blackColor
-    alpha_value         0.75
-  end
-
-  def text_view_1_style
-    text_view_styles( 'theme' => THEME[ '1' ] )
-  end
-
-  def text_view_2_style
-    text_view_styles( 'theme' => THEME[ '2' ] )
-  end
-
-  def text_view_3_style
-    text_view_styles( 'theme' => THEME[ '3' ] )
-  end
-
-  def text_view_4_style
-    text_view_styles( 'theme' => THEME[ '4' ] )
-  end
-
-  def text_view_5_style
-    text_view_styles( 'theme' => THEME[ '5' ] )
-  end
-
-  def text_view_1_scroller_style
-    text_view_scroller_styles( 'theme' => THEME[ '1' ] )
-  end
-
-  def text_view_2_scroller_style
-    text_view_scroller_styles( 'theme' => THEME[ '2' ] )
-  end
-
-  def text_view_3_scroller_style
-    text_view_scroller_styles( 'theme' => THEME[ '3' ] )
-  end
-
-  def text_view_4_scroller_style
-    text_view_scroller_styles( 'theme' => THEME[ '4' ] )
-  end
-
-  def text_view_5_scroller_style
-    text_view_scroller_styles( 'theme' => THEME[ '5' ] )
+    # alpha_value         0.75
   end
 
   def text_view_scroller_styles( options = { } )
@@ -169,6 +74,74 @@ class MainWindowLayout < MotionKit::WindowLayout
     font                          NSFont.fontWithName( 'Helvetica Neue', size: 14 )
 
     insertionPointColor           NSColor.blueColor
+  end
+
+  def add_text_view( note )
+    # root ||= self.view
+
+    size   = note_to_size( note )
+
+    origin = note_to_origin( note )
+
+    context self.view do
+
+      add MyScrollView, "text_view_#{ note.object_id }_scroller".to_sym do
+
+        frame [ origin, size ]
+
+        add( MyTextView, "text_view_#{ note.object_id }".to_sym ) do
+          frame                                     [ [ 0, 0 ], size ]
+
+          minSize                                   [ 0.0, size[ 1 ] ]
+          maxSize                                   [ MyConstants::FLT_MAX, MyConstants::FLT_MAX ]
+
+          textContainer.setContainerSize            [ MyConstants::FLT_MAX, MyConstants::FLT_MAX ]
+          textContainer.setWidthTracksTextView      false#true
+
+          translatesAutoresizingMaskIntoConstraints false
+
+          note                                      note
+
+          setString                                 note.content
+
+          text_view_styles                          'theme' => theme( note )
+        end
+
+        documentView                              get( "text_view_#{ note.object_id }".to_sym )
+
+        translatesAutoresizingMaskIntoConstraints false
+
+        text_view_scroller_styles                 'theme' => theme( note )
+      end
+
+    end
+
+  end
+
+  def note_to_size( note )
+    width  = 800
+    height = 800
+
+    adjusted_width  = width  - ( 2 * MyConstants::HALF_DIVIDER)
+    adjusted_height = height - ( 2 * MyConstants::HALF_DIVIDER)
+
+     [ ( adjusted_width  * ( note.width  / 8.0 ) ) - ( MyConstants::HALF_DIVIDER * 2 ),
+       ( adjusted_height * ( note.height / 8.0 ) ) - ( MyConstants::HALF_DIVIDER * 2 ) ]
+  end
+
+  def note_to_origin( note )
+    width  = 800
+    height = 800
+
+    adjusted_width  = width  - ( 2 * MyConstants::HALF_DIVIDER)
+    adjusted_height = height - ( 2 * MyConstants::HALF_DIVIDER)
+
+     [ ( adjusted_width  * ( note.x / 8.0 ) ) + MyConstants::HALF_DIVIDER + MyConstants::HALF_DIVIDER,
+       ( adjusted_height * ( note.y / 8.0 ) ) + MyConstants::HALF_DIVIDER + MyConstants::HALF_DIVIDER]
+  end
+
+  def theme( note )
+    THEME[ ( ( note.object_id % 4 ) + 1 ).to_s ]
   end
 
 end

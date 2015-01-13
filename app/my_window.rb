@@ -1,8 +1,10 @@
 class MyWindow < NSWindow
 
+  attr_accessor :text_view
+
   include ScreenHelper
 
-  DIVIDER         = 6
+  DIVIDER         = 4
 
   DIVIDERx1       = DIVIDER * 1
   DIVIDERx2       = DIVIDER * 2
@@ -43,6 +45,8 @@ class MyWindow < NSWindow
   def makeFirstResponder( responder )
     super
 
+    puts responder
+
     if responder.class == MyTextView
       contentView.subviews.each do | v |
         drawRectangle( adjustedRectangle( v.frame ),
@@ -50,6 +54,8 @@ class MyWindow < NSWindow
       end
 
       highlightTextView( responder )
+
+      self.text_view = responder
     end
   end
 
@@ -60,9 +66,9 @@ class MyWindow < NSWindow
                 frame.size.height + DIVIDERx2 )
   end
 
-  def highlightTextView( textView )
+  def highlightTextView( textView, color = 0x79d2f8.nscolor )
     drawRectangle( adjustedRectangle( textView.superview.superview.frame ),
-                   0x79d2f8.nscolor )
+                   color )
   end
 
 end

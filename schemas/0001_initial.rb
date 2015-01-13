@@ -3,6 +3,10 @@ schema '0001 initial' do
 
   entity 'Note' do
     string :content
+    integer32 :width
+    integer32 :height
+    integer32 :x
+    integer32 :y
   end
 
   # Examples:

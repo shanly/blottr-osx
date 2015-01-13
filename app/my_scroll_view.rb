@@ -1,0 +1,3 @@
+class MyScrollView < NSScrollView
+
+end

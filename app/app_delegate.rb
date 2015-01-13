@@ -50,6 +50,20 @@ class AppDelegate
     puts 'pressAction'
   end
 
+
+  def splitH
+    puts 'splitH'
+    @controller.splitH
+  end
+
+  def splitV
+    puts 'splitH'
+  end
+
+  def log_layout
+    @controller.log_layout
+  end
+
   def createMenuItem( name, action, keyEquivalent = '' )
     NSMenuItem.alloc.initWithTitle( name, action: action, keyEquivalent: keyEquivalent )
   end

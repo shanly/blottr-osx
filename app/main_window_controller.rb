@@ -12,13 +12,15 @@ class MainWindowController < NSWindowController
 
       window.setDelegate( self )
 
-      ( 1..5 ).to_a.each do | index |
-        text_view( index ).setDelegate( self )
+      load_notes
+
+      notes.each do | note |
+        @layout.add_text_view(note)
+
+        text_view( note.object_id.to_s ).setDelegate( self )
       end
 
       register_hotkey
-
-      load_notes
 
       register_keyboard_listener
 
@@ -88,14 +90,68 @@ class MainWindowController < NSWindowController
 
   def load_notes
     self.notes = PersistenceService.load_notes
-
-    ( 1..5 ).to_a.each do | index |
-      text_view( index ).setString( self.notes[ index - 1 ].content )
-    end
   end
 
   def text_view( index )
     @layout.get( "text_view_#{ index }".to_sym )
+  end
+
+  def scroller( index )
+    @layout.get( "text_view_#{ index }_scroller".to_sym )
+  end
+
+  FLT_MAX         = 999999999
+
+
+
+  def splitH
+    text_view   = window.text_view
+    scroller    = text_view.superview.superview
+    note        = text_view.note
+
+    old_y       = note.y
+
+    note.height = note.height / 2
+    note.y      = note.y      + note.height
+
+    new_size   = NSMakeSize( layout.note_to_size( note )[ 0 ],
+                             layout.note_to_size( note )[ 1 ] )
+    new_origin = NSMakePoint( layout.note_to_origin( note )[ 0 ],
+                              layout.note_to_origin( note )[ 1 ] )
+
+    scroller.setFrameSize(   new_size )
+    scroller.setFrameOrigin( new_origin )
+
+    new_note = Note.create( content: '333',
+                            height: note.height, width: note.width,
+                            x: note.x, y: old_y )
+
+    @layout.add_text_view( new_note )
+
+    self.window.highlightTextView( text_view( new_note.object_id.to_s ), 0x999999.nscolor )
+
+    self.window.highlightTextView( text_view )
+  end
+
+  def log_layout
+    notes.each_with_index do | note, index |
+      scroller   = scroller( index + 1 )
+      text_view  = text_view(  index + 1 )
+
+      next if scroller.nil?
+
+      puts '-----------------------------------------------'
+      puts "#{ index + 1 } X       #{ scroller.frame.origin.x }"
+      puts "#{ index + 1 } Y       #{ scroller.frame.origin.y }"
+      puts "#{ index + 1 } WIDTH   #{ scroller.width }"
+      puts "#{ index + 1 } HEIGHT  #{ scroller.height }"
+
+      puts "#{ index + 1 } X       #{ text_view.frame.origin.x }"
+      puts "#{ index + 1 } Y       #{ text_view.frame.origin.y }"
+      puts "#{ index + 1 } WIDTH   #{ text_view.width }"
+      puts "#{ index + 1 } HEIGHT  #{ text_view.height }"
+    end
+
   end
 
 end

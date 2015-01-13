@@ -30,6 +30,12 @@ class AppDelegate
       addItemWithTitle( 'Select All',           action: 'selectAll:',                     keyEquivalent: 'a' )
     end
 
+    addMenu( 'Split' ) do
+      addItemWithTitle( 'Split Horizontally',   action: 'splitH',                         keyEquivalent: '' )
+      addItemWithTitle( 'Split Vertically',     action: 'splitV',                         keyEquivalent: '' )
+      addItemWithTitle( 'Log',                  action: 'log_layout',                     keyEquivalent: '' )
+    end
+
     NSApp.helpMenu = addMenu('Help') do
       addItemWithTitle( "#{appName} Help",      action: 'showHelp:',                      keyEquivalent: '?' )
     end.menu
