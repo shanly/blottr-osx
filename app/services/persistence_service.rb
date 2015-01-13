@@ -20,7 +20,7 @@ class PersistenceService
   end
 
   def save
-    # cdq.save
+    cdq.save
   end
 
   def reset
@@ -31,7 +31,7 @@ class PersistenceService
   end
 
   def loadNotes
-    reset
+    # reset
 
     ensure_starting_note
 
@@ -40,16 +40,16 @@ class PersistenceService
 
   def ensure_starting_note
     if Note.all.size == 0
-      Note.create( content: '111', height: 8, width: 4, x: 0, y: 0 )
+      Note.create( content: 'your first note, add instructions', height: 8, width: 8, x: 0, y: 0 )
 
-      Note.create( content: '222', height: 8, width: 4, x: 4, y: 0 )
+      # Note.create( content: '222', height: 8, width: 4, x: 4, y: 0 )
 
       # Note.create( content: '222', height: 4, width: 4, x: 4, y: 4 )
       # Note.create( content: '333', height: 4, width: 2, x: 4, y: 0 )
       # Note.create( content: '444', height: 2, width: 2, x: 6, y: 2 )
       # Note.create( content: '555', height: 2, width: 2, x: 6, y: 0 )
 
-      cdq.save
+      save
     end
   end
 

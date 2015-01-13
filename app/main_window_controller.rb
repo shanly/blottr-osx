@@ -81,8 +81,8 @@ class MainWindowController < NSWindowController
   end
 
   def save_notes
-    ( 1..5 ).each do | index |
-      self.notes[ index - 1 ].content = "#{ text_view( index ).string }"
+    notes.each do | note |
+      note.content = "#{ text_view( note.object_id ).string }"
 
       PersistenceService.save
     end
@@ -90,6 +90,8 @@ class MainWindowController < NSWindowController
 
   def load_notes
     self.notes = PersistenceService.load_notes
+
+    puts "#{notes.size}"
   end
 
   def text_view( index )
@@ -100,14 +102,12 @@ class MainWindowController < NSWindowController
     @layout.get( "text_view_#{ index }_scroller".to_sym )
   end
 
-  FLT_MAX         = 999999999
-
-
-
   def splitH
     text_view   = window.text_view
     scroller    = text_view.superview.superview
     note        = text_view.note
+
+    return if note.height <= 1
 
     old_y       = note.y
 
@@ -122,19 +122,55 @@ class MainWindowController < NSWindowController
     scroller.setFrameSize(   new_size )
     scroller.setFrameOrigin( new_origin )
 
-    new_note = Note.create( content: '333',
+    new_note = create_note( content: '...',
                             height: note.height, width: note.width,
                             x: note.x, y: old_y )
 
     @layout.add_text_view( new_note )
 
-    # self.window.highlightTextView( text_view,                            0x00ff00.nscolor )
+    window.makeFirstResponder( text_view( new_note.object_id.to_s ) )
 
-    # text_view( new_note.object_id.to_s ).becomeFirstResponder
-    # scroller( new_note.object_id.to_s ).becomeFirstResponder
+    save_notes
+  end
+
+  def splitV
+    text_view   = window.text_view
+    scroller    = text_view.superview.superview
+    note        = text_view.note
+
+    return if note.width <= 1
+
+    old_x       = note.x
+
+    note.width = note.width / 2
+
+    new_size   = NSMakeSize( layout.note_to_size( note )[ 0 ],
+                             layout.note_to_size( note )[ 1 ] )
+    new_origin = NSMakePoint( layout.note_to_origin( note )[ 0 ],
+                              layout.note_to_origin( note )[ 1 ] )
+
+    scroller.setFrameSize(   new_size )
+    scroller.setFrameOrigin( new_origin )
+
+    new_note = create_note( content: '...',
+                            height: note.height, width: note.width,
+                            x: old_x + note.width, y: note.y )
+
+    @layout.add_text_view( new_note )
 
     window.makeFirstResponder( text_view( new_note.object_id.to_s ) )
-    self.window.highlightTextView( text_view( new_note.object_id.to_s ) )
+
+    save_notes
+  end
+
+  def create_note( attributes )
+    new_note = Note.create( attributes )
+
+    self.notes = self.notes.dup
+    self.notes << new_note
+
+
+    new_note
   end
 
   def log_layout
