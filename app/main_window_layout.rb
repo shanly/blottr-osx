@@ -1,5 +1,7 @@
 class MainWindowLayout < MotionKit::WindowLayout
 
+  include ScreenHelper
+
   THEME_TEST = {
       '1' => { 'bg' => 0xFF0000, 'fg' => 0x000000 },
       '2' => { 'bg' => 0x00FF00, 'fg' => 0x000000 },
@@ -117,8 +119,8 @@ class MainWindowLayout < MotionKit::WindowLayout
   end
 
   def note_to_size( note )
-    width  = 800
-    height = 800
+    width  = screen_width
+    height = screen_height
 
     adjusted_width  = width  - ( 2 * MyConstants::HALF_DIVIDER)
     adjusted_height = height - ( 2 * MyConstants::HALF_DIVIDER)
@@ -128,8 +130,8 @@ class MainWindowLayout < MotionKit::WindowLayout
   end
 
   def note_to_origin( note )
-    width  = 800
-    height = 800
+    width  = screen_width
+    height = screen_height
 
     adjusted_width  = width  - ( 2 * MyConstants::HALF_DIVIDER)
     adjusted_height = height - ( 2 * MyConstants::HALF_DIVIDER)
