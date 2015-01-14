@@ -4,11 +4,13 @@ module ScreenHelper
   SIZE            = 0.9
 
   def screen_width
-    @screen_width = 800#||= NSScreen.mainScreen.frame.size.width * SIZE
+    # @screen_width = 800#
+    @screen_width ||= NSScreen.mainScreen.frame.size.width * SIZE
   end
 
   def screen_height
-    @screen_height = 800 #||= ( NSScreen.mainScreen.frame.size.height * SIZE) - TITLE_HEIGHT
+    # @screen_height = 800
+    @screen_height ||= ( NSScreen.mainScreen.frame.size.height * SIZE )# - TITLE_HEIGHT
   end
 
 end
