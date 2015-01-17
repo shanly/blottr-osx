@@ -17,3 +17,45 @@ rake schema:build
 
 
 iconutil -c icns Icon.iconset
+
+rm /Users/shanly/Documents/blottr.sqlite
+
+
+http://fa2png.io/
+
+
+  THEME_TEST = {
+      '1' => { 'bg' => 0xFF0000, 'fg' => 0x000000 },
+      '2' => { 'bg' => 0x00FF00, 'fg' => 0x000000 },
+      '3' => { 'bg' => 0x0000FF, 'fg' => 0x000000 },
+      '4' => { 'bg' => 0xFF00FF, 'fg' => 0x000000 },
+      '5' => { 'bg' => 0x00FFFF, 'fg' => 0x000000 },
+  }
+
+  # https://color.adobe.com/Beetle-Bus-goes-Jamba-Juice-color-theme-1435983/
+  BEETLE_BUS_GOES_JAMBA_JUICE_ = {
+      '1' => { 'bg' => 0x730046, 'fg' => 0x000000 },
+      '2' => { 'bg' => 0xBFBB11, 'fg' => 0x000000 },
+      '3' => { 'bg' => 0xFFC200, 'fg' => 0x000000 },
+      '4' => { 'bg' => 0xE88801, 'fg' => 0x000000 },
+      '5' => { 'bg' => 0xC93C00, 'fg' => 0x000000 },
+  }
+
+  # https://color.adobe.com/Pistachio-color-theme-16814/
+  PISTACHIO_COLOR_THEME = {
+      '1' => { 'bg' => 0xB0CC99, 'fg' => 0x000000 },
+      '2' => { 'bg' => 0x677E52, 'fg' => 0x000000 },
+      '3' => { 'bg' => 0xB7CA79, 'fg' => 0x000000 },
+      '4' => { 'bg' => 0xF6E8B1, 'fg' => 0x000000 },
+      '5' => { 'bg' => 0x89725B, 'fg' => 0x000000 },
+  }
+
+  PLAIN_THEME = {
+      '1' => { 'bg' => 0xFFFFFF, 'fg' => 0x000000 },
+      '2' => { 'bg' => 0xFFFFFF, 'fg' => 0x000000 },
+      '3' => { 'bg' => 0xFFFFFF, 'fg' => 0x000000 },
+      '4' => { 'bg' => 0xFFFFFF, 'fg' => 0x000000 },
+      '5' => { 'bg' => 0xFFFFFF, 'fg' => 0x000000 },
+  }
+
+  THEME = PISTACHIO_COLOR_THEME

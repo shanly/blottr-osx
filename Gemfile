@@ -6,6 +6,7 @@ gem 'rake'
 gem 'motion-popup'
 gem 'bubble-wrap'
 gem 'motion-kit'
+gem 'sweet-kit'
 
 gem 'cdq', git: 'git://github.com/infinitered/cdq.git'
 

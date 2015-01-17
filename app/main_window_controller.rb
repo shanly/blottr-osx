@@ -15,7 +15,7 @@ class MainWindowController < NSWindowController
       load_notes
 
       notes.each do | note |
-        @layout.add_text_view(note)
+        @layout.add_note_view( note )
 
         text_view( note.object_id.to_s ).setDelegate( self )
       end
@@ -90,12 +90,10 @@ class MainWindowController < NSWindowController
 
   def load_notes
     self.notes = PersistenceService.load_notes
-
-    puts "#{notes.size}"
   end
 
   def text_view( index )
-    @layout.get( "text_view_#{ index }".to_sym )
+    @layout.get("note_view_#{ index }".to_sym).get( "text_view_#{ index }".to_sym )
   end
 
   def scroller( index )
@@ -126,7 +124,7 @@ class MainWindowController < NSWindowController
                             height: note.height, width: note.width,
                             x: note.x, y: old_y )
 
-    @layout.add_text_view( new_note )
+    @layout.add_note_view( new_note )
 
     window.makeFirstResponder( text_view( new_note.object_id.to_s ) )
 
@@ -156,7 +154,7 @@ class MainWindowController < NSWindowController
                             height: note.height, width: note.width,
                             x: old_x + note.width, y: note.y )
 
-    @layout.add_text_view( new_note )
+    @layout.add_note_view( new_note )
 
     window.makeFirstResponder( text_view( new_note.object_id.to_s ) )
 
