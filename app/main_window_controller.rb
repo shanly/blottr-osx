@@ -1,6 +1,6 @@
 class MainWindowController < NSWindowController
 
-  attr_accessor :notes, :needs_saving
+  attr_accessor :notes, :needs_saving, :selected_note
 
   def layout
     @layout ||= MainWindowLayout.new
@@ -8,17 +8,17 @@ class MainWindowController < NSWindowController
 
   def init
     super.tap do
-      self.window = self.layout.window
+      self.window = layout.window
 
       window.setDelegate( self )
 
       load_notes
 
       notes.each do | note |
-        @layout.add_note_view( note )
-
-        text_view( note.object_id.to_s ).setDelegate( self )
+        @layout.add_note_view( note, self )
       end
+
+      select_note( notes[ 0 ] )
 
       register_hotkey
 
@@ -45,32 +45,23 @@ class MainWindowController < NSWindowController
                                                                  object:        nil )
   end
 
-  def register_other_hotkey
-    @key_down_handler = Proc.new do | event |
-      event
-    end
 
-    NSEvent.addGlobalMonitorForEventsMatchingMask( NSKeyDownMask, handler: @key_down_handler )
+
+  def hide_window
+    layout.hide_window
   end
 
   def toggle_window
-    if window.isVisible
-      window.orderOut( false )
-    else
-      NSApp.activateIgnoringOtherApps( true )
-
-      window.full_screen
-
-      window.makeKeyAndOrderFront( self )
-    end
+    layout.toggle_window
   end
+
 
   def register_keyboard_listener
     @key_down_handler = Proc.new do | event |
       @needs_saving = true
 
       if event.keyCode == 53
-        toggle_window
+        hide_window
         nil
       else
         event
@@ -82,7 +73,7 @@ class MainWindowController < NSWindowController
 
   def save_notes
     notes.each do | note |
-      note.content = "#{ text_view( note.object_id ).string }"
+      note.content = "#{ layout.text_view( note ).string }"
 
       PersistenceService.save
     end
@@ -92,99 +83,80 @@ class MainWindowController < NSWindowController
     self.notes = PersistenceService.load_notes
   end
 
-  def text_view( object_id )
-    note_view( object_id ).get( "text_view_#{ object_id }".to_sym )
-  end
 
-  def buttons_view( object_id )
-    note_view( object_id ).get( :button_container )
-  end
 
-  def note_view( object_id )
-    @layout.get("note_view_#{ object_id }".to_sym)
-  end
 
-  def button_view( object_id, action )
-    note_view( object_id ).get( "#{ action }_button" )
-  end
+
+
+
 
   def splitH( note )
-    text_view   = text_view( note.object_id.to_s )
-    scroller    = text_view.superview.superview
-    buttons     = buttons_view( note.object_id.to_s )
-
     return if note.height <= 1
+
+    buttons     = layout.buttons_view( note )
 
     old_y       = note.y
 
     note.height = note.height / 2
     note.y      = note.y      + note.height
 
-    new_size   = NSMakeSize( layout.note_to_size( note )[ 0 ],
-                             layout.note_to_size( note )[ 1 ] )
-    new_origin = NSMakePoint( layout.note_to_origin( note )[ 0 ],
-                              layout.note_to_origin( note )[ 1 ] )
-
-    scroller.setFrameSize(   new_size )
-    scroller.setFrameOrigin( new_origin )
-
-
+    reposition( note )
 
     buttons.setFrameOrigin( NSMakePoint( 0,
-                                         new_size[ 1 ] - 40 ) )
-
-
+                                         size_for( note )[ 1 ] - 40 ) )
 
     new_note = create_note( content: '...',
                             height: note.height, width: note.width,
                             x: note.x, y: old_y )
 
-    @layout.add_note_view( new_note )
-
-    window.makeFirstResponder( text_view( new_note.object_id.to_s ) )
-
-    save_notes
+    post_split_actions( new_note )
   end
 
   def splitV( note )
-    text_view   = text_view( note.object_id.to_s )
-    scroller    = text_view.superview.superview
-    buttons     = buttons_view( note.object_id.to_s )
-
     return if note.width <= 1
 
     old_x       = note.x
 
     note.width = note.width / 2
 
-    new_size   = NSMakeSize( layout.note_to_size( note )[ 0 ],
-                             layout.note_to_size( note )[ 1 ] )
-    new_origin = NSMakePoint( layout.note_to_origin( note )[ 0 ],
-                              layout.note_to_origin( note )[ 1 ] )
-
-    scroller.setFrameSize(   new_size )
-    scroller.setFrameOrigin( new_origin )
-
+    reposition( note )
 
     %w( splitH splitV ).each_with_index do | action, index |
-      buttonV = button_view( note.object_id, action )
-      buttonV.setFrameOrigin( NSMakePoint( new_size[ 0 ] - ( 40 * index ) - 40,
+      buttonV = layout.button_view( note, action )
+      buttonV.setFrameOrigin( NSMakePoint( size_for( note )[ 0 ] - ( 40 * index ) - 40,
                                            0 ) )
     end
-
-
-
-
 
     new_note = create_note( content: '...',
                             height: note.height, width: note.width,
                             x: old_x + note.width, y: note.y )
 
-    @layout.add_note_view( new_note )
+    post_split_actions( new_note )
+  end
 
-    window.makeFirstResponder( text_view( new_note.object_id.to_s ) )
+
+
+  def post_split_actions( new_note )
+    layout.add_note_view( new_note, self )
+
+    select_note( new_note )
 
     save_notes
+  end
+
+  def size_for( note )
+     NSMakeSize( layout.note_to_size( note )[ 0 ],
+                 layout.note_to_size( note )[ 1 ] )
+  end
+
+  def origin_for( note )
+    NSMakePoint( layout.note_to_origin( note )[ 0 ],
+                 layout.note_to_origin( note )[ 1 ] )
+  end
+
+  def reposition( note )
+    layout.scroller( note ).setFrameSize(   size_for(   note ) )
+    layout.scroller( note ).setFrameOrigin( origin_for( note ) )
   end
 
   def create_note( attributes )
@@ -193,29 +165,17 @@ class MainWindowController < NSWindowController
     self.notes = self.notes.dup
     self.notes << new_note
 
-
     new_note
   end
 
-  def log_layout
-    notes.each_with_index do | note, index |
-      scroller   = scroller( index + 1 )
-      text_view  = text_view(  index + 1 )
-
-      next if scroller.nil?
-
-      puts '-----------------------------------------------'
-      puts "#{ index + 1 } X       #{ scroller.frame.origin.x }"
-      puts "#{ index + 1 } Y       #{ scroller.frame.origin.y }"
-      puts "#{ index + 1 } WIDTH   #{ scroller.width }"
-      puts "#{ index + 1 } HEIGHT  #{ scroller.height }"
-
-      puts "#{ index + 1 } X       #{ text_view.frame.origin.x }"
-      puts "#{ index + 1 } Y       #{ text_view.frame.origin.y }"
-      puts "#{ index + 1 } WIDTH   #{ text_view.width }"
-      puts "#{ index + 1 } HEIGHT  #{ text_view.height }"
+  def select_note( note )
+    if self.selected_note
+      layout.hide_buttons_for ( selected_note )
     end
 
+    self.selected_note = note
+
+    layout.make_focus( note )
   end
 
 end

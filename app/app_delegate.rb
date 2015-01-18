@@ -7,30 +7,11 @@ class AppDelegate
 
     PersistenceService.init
 
-    # trustApplication
-
     buildMenu
 
     @controller = MainWindowController.alloc.init
     @controller.showWindow(self)
     @controller.window.orderFrontRegardless
-  end
-
-  def trustApplication
-    keys = Pointer.new( :object )
-    keys.assign( KAXTrustedCheckOptionPrompt )
-
-    values = Pointer.new( :object )
-    values.assign( true )
-
-    options = CFDictionaryCreate( KCFAllocatorDefault,
-                                  keys,
-                                  values,
-                                  1,
-                                  nil,
-                                  nil )
-
-    puts "trusted: #{ AXIsProcessTrustedWithOptions( options ) }"
   end
 
   # def build_menu
@@ -50,26 +31,12 @@ class AppDelegate
     puts 'pressAction'
   end
 
-
-  def splitH
-    puts 'splitH'
-    @controller.splitH
-  end
-
-  def splitV
-    puts 'splitH'
-  end
-
-  def log_layout
-    @controller.log_layout
-  end
-
   def createMenuItem( name, action, keyEquivalent = '' )
     NSMenuItem.alloc.initWithTitle( name, action: action, keyEquivalent: keyEquivalent )
   end
 
   def applicationDidResignActive( notification )
-    @controller.toggle_window
+    @controller.hide_window
   end
 
 end

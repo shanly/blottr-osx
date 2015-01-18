@@ -4,4 +4,8 @@ class Note < CDQManagedObject
     "#{ object_id }: #{ content }"
   end
 
+  def ui_name
+    object_id.to_s
+  end
+
 end

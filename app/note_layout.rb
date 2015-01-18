@@ -27,9 +27,7 @@ class NoteLayout < MotionKit::WindowLayout
         maxSize [ MyConstants::FLT_MAX, MyConstants::FLT_MAX ]
 
         textContainer.setContainerSize            [ MyConstants::FLT_MAX, MyConstants::FLT_MAX ]
-        textContainer.setWidthTracksTextView      false #true
-
-        translatesAutoresizingMaskIntoConstraints false
+        textContainer.setWidthTracksTextView      false
 
         note      @note
         setString @note.content # does not take otherwise
@@ -57,6 +55,7 @@ class NoteLayout < MotionKit::WindowLayout
 
         end
 
+        hidden              true
       end
 
       documentView                              get( "text_view_#{ @note.object_id }".to_sym )

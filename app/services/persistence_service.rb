@@ -30,7 +30,7 @@ class PersistenceService
   end
 
   def loadNotes
-    reset
+    # reset
 
     ensure_starting_note
 
