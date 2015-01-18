@@ -92,18 +92,26 @@ class MainWindowController < NSWindowController
     self.notes = PersistenceService.load_notes
   end
 
-  def text_view( index )
-    @layout.get("note_view_#{ index }".to_sym).get( "text_view_#{ index }".to_sym )
+  def text_view( object_id )
+    note_view( object_id ).get( "text_view_#{ object_id }".to_sym )
   end
 
-  def scroller( index )
-    @layout.get( "text_view_#{ index }_scroller".to_sym )
+  def buttons_view( object_id )
+    note_view( object_id ).get( :button_container )
   end
 
-  def splitH
-    text_view   = window.text_view
+  def note_view( object_id )
+    @layout.get("note_view_#{ object_id }".to_sym)
+  end
+
+  def button_view( object_id, action )
+    note_view( object_id ).get( "#{ action }_button" )
+  end
+
+  def splitH( note )
+    text_view   = text_view( note.object_id.to_s )
     scroller    = text_view.superview.superview
-    note        = text_view.note
+    buttons     = buttons_view( note.object_id.to_s )
 
     return if note.height <= 1
 
@@ -120,6 +128,13 @@ class MainWindowController < NSWindowController
     scroller.setFrameSize(   new_size )
     scroller.setFrameOrigin( new_origin )
 
+
+
+    buttons.setFrameOrigin( NSMakePoint( 0,
+                                         new_size[ 1 ] - 40 ) )
+
+
+
     new_note = create_note( content: '...',
                             height: note.height, width: note.width,
                             x: note.x, y: old_y )
@@ -131,10 +146,10 @@ class MainWindowController < NSWindowController
     save_notes
   end
 
-  def splitV
-    text_view   = window.text_view
+  def splitV( note )
+    text_view   = text_view( note.object_id.to_s )
     scroller    = text_view.superview.superview
-    note        = text_view.note
+    buttons     = buttons_view( note.object_id.to_s )
 
     return if note.width <= 1
 
@@ -149,6 +164,17 @@ class MainWindowController < NSWindowController
 
     scroller.setFrameSize(   new_size )
     scroller.setFrameOrigin( new_origin )
+
+
+    %w( splitH splitV ).each_with_index do | action, index |
+      buttonV = button_view( note.object_id, action )
+      buttonV.setFrameOrigin( NSMakePoint( new_size[ 0 ] - ( 40 * index ) - 40,
+                                           0 ) )
+    end
+
+
+
+
 
     new_note = create_note( content: '...',
                             height: note.height, width: note.width,

@@ -1,7 +1,5 @@
 class MyButton < NSButton
 
-  def setNote( value )
-    @note = value
-  end
+  attr_accessor :note
 
 end

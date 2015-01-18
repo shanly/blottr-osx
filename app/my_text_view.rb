@@ -1,6 +1,6 @@
 class MyTextView < NSTextView
 
-  def setNote( value )
+  def note=( value )
     @note = value
     setString( value.content )
   end
