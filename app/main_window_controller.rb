@@ -1,6 +1,6 @@
 class MainWindowController < NSWindowController
 
-  attr_accessor :notes, :needs_saving, :selected_note
+  attr_accessor :pages, :current_page_index, :needs_saving, :selected_note
 
   def layout
     @layout ||= MainWindowLayout.new
@@ -12,11 +12,26 @@ class MainWindowController < NSWindowController
 
       window.setDelegate( self )
 
-      load_notes
 
-      notes.each do | note |
-        @layout.add_note_view( note, self )
-      end
+      # Create and add toolbar.
+      toolbar = NSToolbar.alloc.initWithIdentifier('MyAwesomeToolbar')
+      toolbar.allowsUserCustomization = true
+      toolbar.displayMode             = NSToolbarDisplayModeIconOnly
+      toolbar.delegate                = self
+      window.toolbar                  = toolbar
+
+      load_pages
+
+      display_current_page
+
+      # mp window
+      # mp window.contentView
+      # mp window.contentView.subviews
+      # mp window.contentView.subviews[ 0 ].subviews
+
+
+      # layout.to_debug
+
 
       select_note( notes[ 0 ] )
 
@@ -27,6 +42,75 @@ class MainWindowController < NSWindowController
       start_saving_timer
     end
   end
+
+  def display_current_page
+    self.notes.each do | note |
+      @layout.add_note_view( note, self )
+    end
+  end
+
+  def clear_current_page
+    @layout.clear_page
+  end
+
+  def load_pages
+    self.pages              = PersistenceService.load_pages
+    self.current_page_index = 0
+  end
+
+  def current_page
+    self.pages[ current_page_index ]
+  end
+
+  def notes
+    current_page.notes.array
+  end
+
+
+  def next_page( arg )
+    if current_page_index >= pages.size - 1
+      self.current_page_index = 0
+    else
+      self.current_page_index += 1
+    end
+
+    clear_current_page
+    display_current_page
+  end
+
+
+
+  NEXT_BUTTON = 'NextButton'
+  PREV_BUTTON = 'PrevButton'
+
+
+  def toolbar(toolbar, itemForItemIdentifier:identifier, willBeInsertedIntoToolbar:flag)
+    if identifier == NEXT_BUTTON || identifier == PREV_BUTTON
+      item          = NSToolbarItem.alloc.initWithItemIdentifier(identifier)
+      item.label    = 'Search Flickr'
+
+      view = NSButton.alloc.initWithFrame(NSZeroRect)
+      view.setTitle  'xxxxx'
+      view.target   = self
+      view.action   = :"next_page:"
+      view.frame    = [[0, 0], [30, 30]]
+
+      item.view     = view
+      item
+    end
+  end
+
+  def toolbarAllowedItemIdentifiers(toolbar)
+    [ NEXT_BUTTON, PREV_BUTTON, NSToolbarFlexibleSpaceItemIdentifier, NSToolbarSpaceItemIdentifier, NSToolbarShowFontsItemIdentifier, NSToolbarShowColorsItemIdentifier ]
+  end
+
+  def toolbarDefaultItemIdentifiers(toolbar)
+    [ NEXT_BUTTON, PREV_BUTTON, NSToolbarFlexibleSpaceItemIdentifier ]
+  end
+
+
+
+
 
   def start_saving_timer
     5.second.every do
@@ -78,14 +162,6 @@ class MainWindowController < NSWindowController
       PersistenceService.save
     end
   end
-
-  def load_notes
-    self.notes = PersistenceService.load_notes
-  end
-
-
-
-
 
 
 
@@ -160,12 +236,7 @@ class MainWindowController < NSWindowController
   end
 
   def create_note( attributes )
-    new_note = Note.create( attributes )
-
-    self.notes = self.notes.dup
-    self.notes << new_note
-
-    new_note
+    current_page.notes.create( attributes )
   end
 
   def select_note( note )

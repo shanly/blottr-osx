@@ -2,8 +2,8 @@ class PersistenceService
 
   include CDQ
 
-  def self.load_notes
-    @instance.loadNotes
+  def self.load_pages
+    @instance.load_pages
   end
 
   def self.save
@@ -23,33 +23,37 @@ class PersistenceService
   end
 
   def reset
-    Note.all.each do |n|
+    Note.all.each do | n |
       n.destroy
+      cdq.save
+    end
+
+    Page.all.each do | p |
+      p.destroy
       cdq.save
     end
   end
 
-  def loadNotes
-    # reset
+  def load_pages
+    reset
 
-    ensure_starting_note
+    ensure_starting_page
 
-    Note.all.array
+    Page.all.array
   end
 
-  def ensure_starting_note
-    if Note.all.size == 0
-      Note.create( content: 'your first note, add instructions', height: 8, width: 4, x: 0, y: 0 )
+  def ensure_starting_page
+    if Page.all.size == 0
+      p = Page.create( title: 'your first page' )
 
-      Note.create( content: '222', height: 8, width: 4, x: 4, y: 0 )
+      p.notes.create( content: "111\n111\n111\n111\n111\n111\n", height: 8, width: 8, x: 0, y: 0 )
 
-      # Note.create( content: '222', height: 4, width: 4, x: 4, y: 4 )
-      # Note.create( content: '333', height: 4, width: 2, x: 4, y: 0 )
-      # Note.create( content: '444', height: 2, width: 2, x: 6, y: 2 )
-      # Note.create( content: '555', height: 2, width: 2, x: 6, y: 0 )
+      p = Page.create( title: 'your second page' )
 
-      save
+      p.notes.create( content: "222\n222\n222\n222\n", height: 8, width: 8, x: 0, y: 0 )
     end
+
+    save
   end
 
 end

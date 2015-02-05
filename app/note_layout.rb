@@ -3,7 +3,8 @@ class NoteLayout < MotionKit::WindowLayout
   include ScreenHelper
 
   def initialize( options )
-    @note = options[ :note ]
+    @note     = options[ :note ]
+    @delegate = options[ :delegate ]
 
     super
   end
@@ -13,12 +14,15 @@ class NoteLayout < MotionKit::WindowLayout
 
     origin = note_to_origin( @note )
 
-    scroller_name   = "text_view_#{ @note.object_id }_scroller".to_sym
-    text_view_name  = "text_view_#{ @note.object_id }".to_sym
+    scroller_name     = @note.text_view_scroller_ui_name
+    text_view_name    = @note.text_view_ui_name
+    button_view_name  = @note.button_view_ui_name
+
 
     add MyScrollView, scroller_name do
-
       frame [ origin, size ]
+
+      note            @note
 
       add MyTextView, text_view_name do
         frame   [ [ 0, 0 ], size ]
@@ -33,9 +37,10 @@ class NoteLayout < MotionKit::WindowLayout
         setString @note.content # does not take otherwise
 
         text_view_styles 'theme' => theme
+
       end
 
-      add NSView, :button_container do
+      add NSView, button_view_name do
         frame           [ [ 0,         size[ 1 ] - 40 ],
                           [ size[ 0 ], 40 ] ]
 
@@ -67,11 +72,11 @@ class NoteLayout < MotionKit::WindowLayout
   end
 
   def splitH
-    window.delegate.splitH( @note )
+    @delegate.splitH( @note )
   end
 
   def splitV
-    window.delegate.splitV( @note )
+    @delegate.splitV( @note )
   end
 
   def button_style( action )

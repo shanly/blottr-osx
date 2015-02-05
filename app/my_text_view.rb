@@ -5,6 +5,10 @@ class MyTextView < NSTextView
     setString( value.content )
   end
 
+  def note
+    @note
+  end
+
   def mouseDown( event )
     super
 
