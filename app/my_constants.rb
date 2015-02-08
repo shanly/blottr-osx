@@ -13,4 +13,6 @@ class MyConstants
 
   HIGHLIGHT_COLOR = 0x79d2f8
   BORDER_COLOR    = 0x999999
+
+  DEBUG_COLOR    = 0xFF00FF
 end
