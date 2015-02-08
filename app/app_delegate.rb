@@ -5,6 +5,8 @@ class AppDelegate
   def applicationDidFinishLaunching( notification )
     @application_name = App.name
 
+    load_custom_fonts
+
     PersistenceService.init
 
     buildMenu
@@ -37,6 +39,27 @@ class AppDelegate
 
   def applicationDidResignActive( notification )
     @controller.hide_window
+  end
+
+  def applicationDidBecomeActive( event )
+    mp __method__
+  end
+
+  def applicationDidResignActive( event )
+    mp __method__
+  end
+
+  def load_custom_fonts
+    load_custom_font( 'octicons' )
+    load_custom_font( 'fontawesome-webfont' )
+    load_custom_font( 'Linearicons' )
+  end
+
+  def load_custom_font( font_name )
+    font_location = NSBundle.mainBundle.pathForResource( font_name, ofType: 'ttf' )
+    font_url      = NSURL.fileURLWithPath(font_location)
+
+    CTFontManagerRegisterFontsForURL( font_url, KCTFontManagerScopeProcess, nil )
   end
 
 end
