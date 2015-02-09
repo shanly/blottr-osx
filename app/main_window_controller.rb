@@ -12,9 +12,8 @@ class MainWindowController < NSWindowController
 
       window.setDelegate( self )
 
-
       # Create and add toolbar.
-      toolbar = NSToolbar.alloc.initWithIdentifier('MyAwesomeToolbar')
+      toolbar = NSToolbar.alloc.initWithIdentifier( 'MyToolbar' )
       toolbar.allowsUserCustomization = true
       toolbar.displayMode             = NSToolbarDisplayModeIconOnly
       toolbar.delegate                = self
@@ -24,15 +23,6 @@ class MainWindowController < NSWindowController
 
       display_current_page
 
-      # mp window
-      # mp window.contentView
-      # mp window.contentView.subviews
-      # mp window.contentView.subviews[ 0 ].subviews
-
-
-      # layout.to_debug
-
-
       select_note( notes[ 0 ] )
 
       register_hotkey
@@ -40,10 +30,14 @@ class MainWindowController < NSWindowController
       register_keyboard_listener
 
       start_saving_timer
+
+      layout.to_debug
     end
   end
 
   def display_current_page
+    @title_view.cell.stringValue = current_page.title
+
     self.notes.each do | note |
       @layout.add_note_view( note, self )
     end
@@ -78,34 +72,92 @@ class MainWindowController < NSWindowController
     display_current_page
   end
 
+  def previous_page( arg )
+    if current_page_index == 0
+      self.current_page_index = pages.size - 1
+    else
+      self.current_page_index -= 1
+    end
+
+    clear_current_page
+    display_current_page
+  end
 
 
-  NEXT_BUTTON = 'NextButton'
-  PREV_BUTTON = 'PrevButton'
 
+  NEXT_BUTTON     = 'next_page'
+  PREV_BUTTON     = 'previous_page'
+  NEW_PAGE_BUTTON = 'new_page'
+  TITLE_FIELD     = 'title'
 
-  def toolbar(toolbar, itemForItemIdentifier:identifier, willBeInsertedIntoToolbar:flag)
-    if identifier == NEXT_BUTTON || identifier == PREV_BUTTON
+  MENU_BUTTONS = [ NEXT_BUTTON, PREV_BUTTON, NEW_PAGE_BUTTON ]
+
+  MENU_DEFINITIONS = {
+    NEXT_BUTTON => {
+      icon: "\ue762",
+      action: 'next_page:'
+    },
+    PREV_BUTTON => {
+      icon: "\ue761",
+      action: 'previous_page:'
+    },
+    NEW_PAGE_BUTTON => {
+      icon: "\ue763",
+      action: 'new_page:'
+    },
+  }
+
+  def toolbar( toolbar, itemForItemIdentifier: identifier, willBeInsertedIntoToolbar: flag )
+    if identifier == TITLE_FIELD
       item          = NSToolbarItem.alloc.initWithItemIdentifier(identifier)
-      item.label    = 'Search Flickr'
+      @title_view   = NSTextField.alloc.initWithFrame(NSZeroRect)
 
-      view = NSButton.alloc.initWithFrame(NSZeroRect)
-      view.setTitle  'xxxxx'
+      @title_view.target   = self
+      @title_view.action   = :"toolbarSearch:"
+
+      @title_view.frame    = [[0, 0], [200, 0]]
+
+      @title_view.setBezeled( true )
+      @title_view.setBezelStyle NSTextFieldRoundedBezel
+
+      item.view = @title_view
+
+      item
+    elsif MENU_BUTTONS.include?( identifier )
+      item          = NSToolbarItem.alloc.initWithItemIdentifier( identifier )
+      view          = NSButton.alloc.initWithFrame( NSZeroRect )
+
       view.target   = self
-      view.action   = :"next_page:"
-      view.frame    = [[0, 0], [30, 30]]
+      view.action   = MENU_DEFINITIONS[ identifier ][ :action ]
+
+      view.frame    = [ [ 0, 0 ], [ 30, 30 ] ]
+
+      view.cell.setBezelStyle NSTexturedRoundedBezelStyle#NSRoundRectBezelStyle#NSSmallSquareBezelStyle
+
+      view.setAttributedTitle( icon( MENU_DEFINITIONS[ identifier ][ :icon ] ) )
 
       item.view     = view
+
       item
     end
   end
 
   def toolbarAllowedItemIdentifiers(toolbar)
-    [ NEXT_BUTTON, PREV_BUTTON, NSToolbarFlexibleSpaceItemIdentifier, NSToolbarSpaceItemIdentifier, NSToolbarShowFontsItemIdentifier, NSToolbarShowColorsItemIdentifier ]
+    [ NEXT_BUTTON, PREV_BUTTON, NEW_PAGE_BUTTON, TITLE_FIELD, NSToolbarFlexibleSpaceItemIdentifier, NSToolbarSpaceItemIdentifier, NSToolbarShowFontsItemIdentifier, NSToolbarShowColorsItemIdentifier ]
   end
 
   def toolbarDefaultItemIdentifiers(toolbar)
-    [ NEXT_BUTTON, PREV_BUTTON, NSToolbarFlexibleSpaceItemIdentifier ]
+    [ PREV_BUTTON, NEXT_BUTTON, NSToolbarFlexibleSpaceItemIdentifier, TITLE_FIELD, NSToolbarFlexibleSpaceItemIdentifier, NEW_PAGE_BUTTON ]
+  end
+
+  def icon( icon )
+    icon = NSMutableAttributedString.alloc.initWithString( icon )
+
+    icon.addAttribute( NSFontAttributeName,
+                       value: NSFont.fontWithName( 'Linearicons', size:14 ),
+                       range: NSMakeRange( 0, 1 ) )
+
+    icon
   end
 
 
@@ -125,11 +177,15 @@ class MainWindowController < NSWindowController
     DDHotKeyCenter.sharedHotKeyCenter.registerHotKeyWithKeyCode( KVK_ANSI_N,
                                                                  modifierFlags: NSControlKeyMask | NSAlternateKeyMask,
                                                                  target:        self,
-                                                                 action:        'toggle_window',
+                                                                 action:        'show_window',
                                                                  object:        nil )
   end
 
 
+
+  def show_window
+    layout.show_window
+  end
 
   def hide_window
     layout.hide_window
@@ -231,8 +287,8 @@ class MainWindowController < NSWindowController
   end
 
   def reposition( note )
-    layout.scroller( note ).setFrameSize(   size_for(   note ) )
-    layout.scroller( note ).setFrameOrigin( origin_for( note ) )
+    layout.scroller_view( note ).setFrameSize(   size_for(   note ) )
+    layout.scroller_view( note ).setFrameOrigin( origin_for( note ) )
   end
 
   def create_note( attributes )

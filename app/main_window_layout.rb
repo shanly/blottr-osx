@@ -1,4 +1,4 @@
-class MainWindowLayout < MotionKit::WindowLayout
+class MainWindowLayout < MyWindowLayout
 
   include ScreenHelper
 
@@ -8,14 +8,14 @@ class MainWindowLayout < MotionKit::WindowLayout
 
       add MyPage, :page do
         frame   [ [ 0, 0 ],
-                  [ screen_width, screen_height] ]
+                  [ screen_width, screen_height - MENU_HEIGHT ] ]
       end
     end
   end
 
   def window_style
     title               App.name
-    styleMask           NSTitledWindowMask#NSTitledWindowMask
+    styleMask           NSTitledWindowMask
     background_color    MyConstants::HIGHLIGHT_COLOR.nscolor
 
     setOpaque           false
@@ -33,7 +33,11 @@ class MainWindowLayout < MotionKit::WindowLayout
     note_view_layout( note ).get( note.button_view_ui_name ) if note_view_layout( note )
   end
 
-  def scroller( note )
+  def button_view( note, action )
+    note_view_layout( note ).get( "#{ action }_button" )
+  end
+
+  def scroller_view( note )
     note_view_layout( note ).get( note.text_view_scroller_ui_name )
   end
 
@@ -43,19 +47,12 @@ class MainWindowLayout < MotionKit::WindowLayout
 
 
 
-
-  def button_view( note, action )
-    note_view( note ).get( "#{ action }_button" )
-  end
-
-
-
   def hide_buttons_for( note )
-    buttons_view( note ).hidden = true if buttons_view( note )
+    buttons_view( note ).hidden = true  if buttons_view( note )
   end
 
   def show_buttons_for( note )
-    buttons_view( note ).hidden = false  if buttons_view( note )
+    buttons_view( note ).hidden = false if buttons_view( note )
   end
 
 
@@ -73,15 +70,19 @@ class MainWindowLayout < MotionKit::WindowLayout
     end
   end
 
+  def show_window
+    NSApp.activateIgnoringOtherApps( true )
+
+    window.full_screen
+
+    window.makeKeyAndOrderFront( self )
+  end
+
   def toggle_window
     if window.isVisible
       hide_window
     else
-      NSApp.activateIgnoringOtherApps( true )
-
-      window.full_screen
-
-      window.makeKeyAndOrderFront( self )
+      show_window
     end
   end
 
@@ -91,13 +92,11 @@ class MainWindowLayout < MotionKit::WindowLayout
                                   note:     note,
                                   delegate: delegate )
 
-    element     = note_layout.build
+    note_layout.build
 
     name_element( note_layout, note.note_view_layout_ui_name )
 
     note_layout.get( note.text_view_ui_name ).delegate = delegate
-
-    to_debug
   end
 
   def clear_page
@@ -111,15 +110,6 @@ class MainWindowLayout < MotionKit::WindowLayout
 
         forget( note_view.note.note_view_layout_ui_name )
       end
-    end
-
-    to_debug
-  end
-
-  def to_debug
-    @elements.each do | k,v |
-      mp k
-      mp v
     end
   end
 

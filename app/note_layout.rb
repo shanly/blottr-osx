@@ -1,4 +1,4 @@
-class NoteLayout < MotionKit::WindowLayout
+class NoteLayout < MyWindowLayout#MotionKit::WindowLayout
 
   include ScreenHelper
 
@@ -50,7 +50,7 @@ class NoteLayout < MotionKit::WindowLayout
             frame           [ [ size[ 0 ] - ( 40 * index ) - 40, 0 ],
                               [ 40,                              40 ] ]
 
-            button_style    action
+            button_style    @note, action
 
             note            @note
 
@@ -79,20 +79,18 @@ class NoteLayout < MotionKit::WindowLayout
     @delegate.splitV( @note )
   end
 
-  def button_style( action )
+  def button_style( note, action )
     button_type     NSMomentaryLightButton
 
     image_position  NSImageOnly
-    # setShowsBorderOnlyWhileMouseInside true
+    # title               note.ui_name
 
     cell do
       background_color  0x999999.nscolor
       bezelStyle        NSSmallSquareBezelStyle
       image             "#{ action }.png".nsimage
-      # alignment NSCenterTextAlignment
-      bordered    true
-      # setOpaque           false
-      # alpha_value         0.75
+      alignment         NSCenterTextAlignment
+      bordered          true
     end
   end
 
