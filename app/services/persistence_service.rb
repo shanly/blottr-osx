@@ -35,7 +35,7 @@ class PersistenceService
   end
 
   def load_pages
-    reset
+    # reset
 
     ensure_starting_page
 

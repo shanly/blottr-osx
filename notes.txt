@@ -24,6 +24,10 @@ rm /Users/shanly/Documents/blottr.sqlite
 http://fa2png.io/
 
 
+mp __method__ will echo the name of the method from which you called motion_print.
+mp caller will trace back up the call stack, so you can see how a method got called.
+
+
   THEME_TEST = {
       '1' => { 'bg' => 0xFF0000, 'fg' => 0x000000 },
       '2' => { 'bg' => 0x00FF00, 'fg' => 0x000000 },
@@ -59,3 +63,19 @@ http://fa2png.io/
   }
 
   THEME = PISTACHIO_COLOR_THEME
+
+
+
+
+
+
+
+- hide / show
+    - http://stackoverflow.com/questions/3107326/detecting-if-the-window-is-a-key-window-in-cocoa
+
+- multiple buttons
+    - explicitly remove
+
+- layout issue with top border
+
+- title saving / setting

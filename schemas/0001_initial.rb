@@ -1,12 +1,20 @@
 
 schema '0001 initial' do
 
+  entity 'Page' do
+    string :title
+
+    has_many :notes
+  end
+
   entity 'Note' do
     string :content
     integer32 :width
     integer32 :height
     integer32 :x
     integer32 :y
+
+    belongs_to :page
   end
 
   # Examples:

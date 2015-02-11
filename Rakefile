@@ -10,8 +10,12 @@ end
 
 Motion::Project::App.setup do |app|
   # Use `rake config' to see complete project settings.
-  app.name                        = 'blottr'
-  app.identifier                  = 'com.yourcompany.blottr'
+
+  app.name                        = 'blottrx'
+  app.identifier                  = 'com.yourcompany.blottrx'
+
+  # app.name                        = 'blottrx'
+  # app.identifier                  = 'com.yourcompany.blottrx'
 
   app.info_plist[ 'LSUIElement' ] = true
 

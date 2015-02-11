@@ -31,7 +31,7 @@ class MainWindowController < NSWindowController
 
       start_saving_timer
 
-      layout.to_debug
+      # layout.to_debug
     end
   end
 
@@ -115,10 +115,15 @@ class MainWindowController < NSWindowController
       @title_view.target   = self
       @title_view.action   = :"toolbarSearch:"
 
-      @title_view.frame    = [[0, 0], [200, 0]]
+      mp self
 
-      @title_view.setBezeled( true )
+      @title_view.delegate = self
+
+      @title_view.frame    = [[0, 0], [300, 0]]
+
+      @title_view.setBezeled    true
       @title_view.setBezelStyle NSTextFieldRoundedBezel
+      @title_view.setAlignment  NSCenterTextAlignment
 
       item.view = @title_view
 
@@ -141,6 +146,14 @@ class MainWindowController < NSWindowController
       item
     end
   end
+
+
+  def control( control, textShouldEndEditing: text )
+    current_page.title = @title_view.stringValue
+
+    true
+  end
+
 
   def toolbarAllowedItemIdentifiers(toolbar)
     [ NEXT_BUTTON, PREV_BUTTON, NEW_PAGE_BUTTON, TITLE_FIELD, NSToolbarFlexibleSpaceItemIdentifier, NSToolbarSpaceItemIdentifier, NSToolbarShowFontsItemIdentifier, NSToolbarShowColorsItemIdentifier ]
@@ -215,10 +228,14 @@ class MainWindowController < NSWindowController
     notes.each do | note |
       note.content = "#{ layout.text_view( note ).string }"
 
-      PersistenceService.save
+      save
     end
   end
 
+
+  def save
+    PersistenceService.save
+  end
 
 
 

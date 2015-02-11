@@ -2,5 +2,9 @@
 <model name="" userDefinedModelVersionIdentifier="0001 initial" type="com.apple.IDECoreDataModeler.DataModel" documentVersion="1.0" lastSavedToolsVersion="2061" systemVersion="12D78" minimumToolsVersion="Xcode 4.3" macOSVersion="Automatic" iOSVersion="Automatic">
   <entity name="Note" syncable="YES" representedClassName="Note">
     <attribute optional="YES" syncable="YES" attributeType="String" name="content"/>
+    <attribute optional="YES" syncable="YES" attributeType="Integer 32" name="width" defaultValueString="0"/>
+    <attribute optional="YES" syncable="YES" attributeType="Integer 32" name="height" defaultValueString="0"/>
+    <attribute optional="YES" syncable="YES" attributeType="Integer 32" name="x" defaultValueString="0"/>
+    <attribute optional="YES" syncable="YES" attributeType="Integer 32" name="y" defaultValueString="0"/>
   </entity>
 </model>

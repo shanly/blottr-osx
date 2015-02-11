@@ -1,6 +1,12 @@
 GIT
+  remote: git://github.com/MohawkApps/motion_print.git
+  revision: 065f9d99991a54fadcbc7cd792a6101162dcbd21
+  specs:
+    motion_print (0.0.4)
+
+GIT
   remote: git://github.com/infinitered/cdq.git
-  revision: 568269287137c26de54fb387fa5088254a4b47a9
+  revision: a023a6aa38ac9a0543baf426cf55ceae74c05e24
   specs:
     cdq (0.1.11)
       motion-yaml
@@ -18,9 +24,8 @@ GEM
     builder (3.2.2)
     dbt (1.1.5)
     i18n (0.7.0)
-    motion-kit (0.12.0)
+    motion-kit (0.17.0)
       dbt (~> 1.1.5)
-    motion-popup (1.1)
     motion-yaml (1.4)
     multi_json (1.10.1)
     plist (3.1.0)
@@ -29,10 +34,7 @@ GEM
       activesupport (~> 3.2)
       builder (~> 3.2)
       plist (~> 3.1)
-    sugarcube (3.0.6)
-    sweet-kit (0.4.0)
-      motion-kit (~> 0.12.0)
-      sugarcube
+    sugarcube (3.2.0)
 
 PLATFORMS
   ruby
@@ -41,7 +43,6 @@ DEPENDENCIES
   bubble-wrap
   cdq!
   motion-kit
-  motion-popup
+  motion_print!
   rake
   sugarcube
-  sweet-kit
