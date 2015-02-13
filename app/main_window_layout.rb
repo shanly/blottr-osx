@@ -102,11 +102,7 @@ class MainWindowLayout < MyWindowLayout
   def clear_page
     context view do
       get( :page ).subviews.dup.each do | note_view |
-        get( note_view.note.note_view_layout_ui_name ).get( note_view.note.text_view_ui_name ).delegate = nil
-        get( note_view.note.note_view_layout_ui_name ).remove( note_view.note.text_view_ui_name )
-        get( note_view.note.note_view_layout_ui_name ).remove( note_view.note.text_view_scroller_ui_name )
-
-        forget( note_view.note.note_view_layout_ui_name )
+        remove_note_view( note_view.note )
       end
     end
   end
@@ -115,24 +111,19 @@ class MainWindowLayout < MyWindowLayout
     context view do
       get( :page ).subviews.dup.each do | note_view |
         if note_view.note == note
-          get( note_view.note.note_view_layout_ui_name ).get( note_view.note.text_view_ui_name ).delegate = nil
-          get( note_view.note.note_view_layout_ui_name ).remove( note_view.note.text_view_ui_name )
-          get( note_view.note.note_view_layout_ui_name ).remove( note_view.note.text_view_scroller_ui_name )
-
-          forget( note_view.note.note_view_layout_ui_name )
+          remove_note_view( note )
         end
       end
     end
   end
 
+  def remove_note_view( note )
+    get( note.note_view_layout_ui_name ).get( note.text_view_ui_name ).delegate = nil
 
-  def remove_note_view( note_view )
-    get( note_view.note.note_view_layout_ui_name ).get( note_view.note.text_view_ui_name ).delegate = nil
+    get( note.note_view_layout_ui_name ).remove( note.text_view_ui_name )
+    get( note.note_view_layout_ui_name ).remove( note.text_view_scroller_ui_name )
 
-    get( note_view.note.note_view_layout_ui_name ).remove( note_view.note.text_view_ui_name )
-    get( note_view.note.note_view_layout_ui_name ).remove( note_view.note.text_view_scroller_ui_name )
-
-    forget( note_view.note.note_view_layout_ui_name )
+    forget( note.note_view_layout_ui_name )
   end
 
 end

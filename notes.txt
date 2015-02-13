@@ -80,6 +80,8 @@ mp caller will trace back up the call stack, so you can see how a method got cal
 
 - title saving / setting
 
+- lost focus highlighting
+
 
 
 

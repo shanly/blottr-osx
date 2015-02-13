@@ -34,10 +34,10 @@ class NoteLayout < MyWindowLayout#MotionKit::WindowLayout
         textContainer.setWidthTracksTextView      false
 
         note      @note
-        setString @note.to_debug_position#content # does not take otherwise
+        # setString @note.to_debug_position#content # does not take otherwise
+        setString @note.content # does not take otherwise
 
         text_view_styles 'theme' => theme
-
       end
 
       add MyView, button_view_name do
