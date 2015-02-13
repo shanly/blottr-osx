@@ -1,3 +1,3 @@
-class MyPage < NSView
+class MyPage < MyView
 
 end

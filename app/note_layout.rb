@@ -40,12 +40,9 @@ class NoteLayout < MyWindowLayout#MotionKit::WindowLayout
 
       end
 
-      add NSView, button_view_name do
+      add MyView, button_view_name do
         frame           [ [ 0,         size[ 1 ] - 40 ],
                           [ size[ 0 ], 40 ] ]
-
-        setWantsLayer             true
-        layer.setBackgroundColor '#ff00ff'.cgcolor
 
         %w( splitH splitV merge ).each_with_index do | action, index |
 
