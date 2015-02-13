@@ -24,19 +24,19 @@ class PersistenceService
   end
 
   def reset
-    Note.all.each do | n |
+    Note.all.each do |n|
       n.destroy
       cdq.save
     end
 
-    Page.all.each do | p |
+    Page.all.each do |p|
       p.destroy
       cdq.save
     end
   end
 
   def load_pages
-    # reset
+    reset
 
     ensure_starting_page
 
@@ -45,20 +45,30 @@ class PersistenceService
 
   def ensure_starting_page
     if Page.all.size == 0
-      p = Page.create( title: 'your first page' )
-      p.notes.create( content: "111\n111\n111\n111\n111\n111\n", height: 8, width: 2, x: 0, y: 0 )
-      p.notes.create( content: "111\n111\n111\n111\n111\n111\n", height: 8, width: 2, x: 2, y: 0 )
-      p.notes.create( content: "111\n111\n111\n111\n111\n111\n", height: 8, width: 2, x: 4, y: 0 )
-      p.notes.create( content: "111\n111\n111\n111\n111\n111\n", height: 8, width: 2, x: 6, y: 0 )
+      p1 = Page.create(title: 'your first page')
+      p1.notes.create(content: "111\n111\n111\n111\n111\n111\n", height: 8, width: 2, x: 0, y: 0)
+      p1.notes.create(content: "111\n111\n111\n111\n111\n111\n", height: 8, width: 2, x: 2, y: 0)
+      p1.notes.create(content: "111\n111\n111\n111\n111\n111\n", height: 8, width: 2, x: 4, y: 0)
+      p1.notes.create(content: "111\n111\n111\n111\n111\n111\n", height: 8, width: 2, x: 6, y: 0)
 
-      p = Page.create( title: 'your second page' )
-      p.notes.create( content: "222\n222\n222\n222\n", height: 4, width: 8, x: 0, y: 0 )
-      p.notes.create( content: "222\n222\n222\n222\n", height: 4, width: 8, x: 0, y: 4 )
 
-      p = Page.create( title: 'your third page' )
-      p.notes.create( content: "333\n333\n333\n333\n", height: 4, width: 8, x: 0, y: 0 )
-      p.notes.create( content: "333\n333\n333\n333\n", height: 2, width: 8, x: 0, y: 4 )
-      p.notes.create( content: "333\n333\n333\n333\n", height: 2, width: 8, x: 0, y: 6 )
+      p2 = Page.create(title: 'your second page')
+      p2.notes.create(content: "222\n222\n222\n222\n", height: 4, width: 8, x: 0, y: 0)
+      p2.notes.create(content: "222\n222\n222\n222\n", height: 4, width: 8, x: 0, y: 4)
+
+      p3 = Page.create(title: 'your third page')
+      p3.notes.create(content: "333\n333\n333\n333\n", height: 4, width: 8, x: 0, y: 0)
+      p3.notes.create(content: "333\n333\n333\n333\n", height: 2, width: 8, x: 0, y: 4)
+      p3.notes.create(content: "333\n333\n333\n333\n", height: 2, width: 8, x: 0, y: 6)
+
+      p1.next_page      = NextPage.create( page: p2 )
+      p1.previous_page  = PreviousPage.create( page: p3 )
+
+      p2.next_page      = NextPage.create( page: p3 )
+      p2.previous_page  = PreviousPage.create( page: p1 )
+
+      p3.next_page      = NextPage.create( page: p1 )
+      p3.previous_page  = PreviousPage.create( page: p2 )
     end
 
     save
@@ -68,17 +78,41 @@ class PersistenceService
   def backup_path
     # mp App.documents_path
 
-    File.join( App.documents_path, "backup-#{ Time.now.to_i }.xml" )
+    # File.join(App.documents_path, "backup-#{ Time.now.to_i }.xml")
+    File.join(App.documents_path, "backup-#{ Time.now.to_i }.json")
   end
 
   def backup
-    file = File.open( self.backup_path, 'w' )
+    file = File.open(self.backup_path, 'w')
 
-    file.write( backup_xml )
+    file.write(backup_json)
     file.flush
     file.close
 
     file = nil
+  end
+
+  def backup_json
+    pages = [ ]
+
+    Page.all.each do | p |
+      page = { title: p.title,
+               notes: [] }
+
+      p.notes.each do | n |
+        page[ :notes ] << {
+            x:       n.x,
+            y:       n.y,
+            width:   n.width,
+            height:  n.height,
+            content: n.content,
+        }
+      end
+
+      pages << page
+    end
+
+    BW::JSON.generate(pages)
   end
 
   def backup_xml

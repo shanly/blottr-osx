@@ -11,15 +11,18 @@ class MainWindowController < NSWindowController
 
   MENU_DEFINITIONS = {
     NEXT_BUTTON => {
-      icon: "\ue762",
+      # icon: "\ue762",
+      icon: 'next.png',
       action: 'next_page:'
     },
     PREV_BUTTON => {
-      icon: "\ue761",
+      # icon: "\ue761",
+      icon: 'previous.png',
       action: 'previous_page:'
     },
     NEW_PAGE_BUTTON => {
-      icon: "\ue763",
+      # icon: "\ue763",
+      icon: 'next.png',
       action: 'new_page:'
     },
   }
@@ -29,8 +32,8 @@ class MainWindowController < NSWindowController
       item          = NSToolbarItem.alloc.initWithItemIdentifier(identifier)
       @title_view   = MyTextField.alloc.initWithFrame(NSZeroRect)
 
-      @title_view.target   = self
-      @title_view.action   = :"toolbarSearch:"
+      # @title_view.target   = self
+      # @title_view.action   = :"toolbarSearch:"
 
       mp self
 
@@ -56,7 +59,14 @@ class MainWindowController < NSWindowController
 
       view.cell.setBezelStyle NSTexturedRoundedBezelStyle#NSRoundRectBezelStyle#NSSmallSquareBezelStyle
 
-      view.setAttributedTitle( icon( MENU_DEFINITIONS[ identifier ][ :icon ] ) )
+      # view.setAttributedTitle( icon( MENU_DEFINITIONS[ identifier ][ :icon ] ) )
+
+      view.setButtonType     NSMomentaryLightButton
+
+      view.setImagePosition  NSImageOnly
+      view.setImage          MENU_DEFINITIONS[ identifier ][ :icon ].nsimage
+
+      # view.cell.setAlignment         NSCenterTextAlignment
 
       item.view     = view
 

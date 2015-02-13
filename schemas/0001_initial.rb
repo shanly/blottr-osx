@@ -5,10 +5,22 @@ schema '0001 initial' do
     string :title
 
     has_many :notes
+
+    belongs_to :next_page
+    belongs_to :previous_page
+  end
+
+  entity 'NextPage'  do
+    belongs_to :page
+  end
+
+  entity 'PreviousPage'  do
+    belongs_to :page
   end
 
   entity 'Note' do
     string :content
+
     integer32 :width
     integer32 :height
     integer32 :x

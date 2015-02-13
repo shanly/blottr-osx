@@ -1,0 +1,3 @@
+class NextPage < CDQManagedObject
+
+end

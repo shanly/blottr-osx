@@ -1,6 +1,6 @@
 class MainWindowController < NSWindowController
 
-  attr_accessor :pages, :current_page_index, :needs_saving, :selected_note
+  attr_accessor :pages, :current_page, :needs_saving, :selected_note
 
   def layout
     @layout ||= MainWindowLayout.new
@@ -48,42 +48,38 @@ class MainWindowController < NSWindowController
   end
 
   def load_pages
-    self.pages              = PersistenceService.load_pages
-    self.current_page_index = 0
-  end
-
-  def current_page
-    self.pages[ current_page_index ]
+    self.pages        = PersistenceService.load_pages
+    self.current_page = self.pages[ 0 ]
   end
 
   def notes
-    current_page.notes.array
+    self.current_page.notes.array
   end
 
 
   def next_page( arg )
-    if current_page_index >= pages.size - 1
-      self.current_page_index = 0
-    else
-      self.current_page_index += 1
-    end
+    self.current_page = self.current_page.next_page.page
 
     clear_current_page
     display_current_page
   end
 
   def previous_page( arg )
-    if current_page_index == 0
-      self.current_page_index = pages.size - 1
-    else
-      self.current_page_index -= 1
-    end
+    self.current_page = self.current_page.previous_page.page
 
     clear_current_page
     display_current_page
   end
 
+  def new_page( arg )
+    page = Page.create( title: 'your new page' )
 
+    self.pages << page
+
+
+
+    save
+  end
 
 
   def start_saving_timer
