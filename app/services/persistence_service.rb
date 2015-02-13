@@ -35,7 +35,7 @@ class PersistenceService
   end
 
   def load_pages
-    # reset
+    reset
 
     ensure_starting_page
 
@@ -45,16 +45,18 @@ class PersistenceService
   def ensure_starting_page
     if Page.all.size == 0
       p = Page.create( title: 'your first page' )
-      p.notes.create( content: "111\n111\n111\n111\n111\n111\n", height: 4, width: 8, x: 0, y: 0 )
-      p.notes.create( content: "111\n111\n111\n111\n111\n111\n", height: 4, width: 8, x: 0, y: 4 )
+      p.notes.create( content: "111\n111\n111\n111\n111\n111\n", height: 8, width: 2, x: 0, y: 0 )
+      p.notes.create( content: "111\n111\n111\n111\n111\n111\n", height: 8, width: 2, x: 2, y: 0 )
+      p.notes.create( content: "111\n111\n111\n111\n111\n111\n", height: 8, width: 2, x: 4, y: 0 )
+      p.notes.create( content: "111\n111\n111\n111\n111\n111\n", height: 8, width: 2, x: 6, y: 0 )
 
-      p = Page.create( title: 'your second page' )
-      p.notes.create( content: "222\n222\n222\n222\n", height: 4, width: 8, x: 0, y: 0 )
-      p.notes.create( content: "222\n222\n222\n222\n", height: 4, width: 8, x: 0, y: 4 )
-
-      p = Page.create( title: 'your third page' )
-      p.notes.create( content: "333\n333\n333\n333\n", height: 4, width: 8, x: 0, y: 0 )
-      p.notes.create( content: "333\n333\n333\n333\n", height: 4, width: 8, x: 0, y: 4 )
+      # p = Page.create( title: 'your second page' )
+      # p.notes.create( content: "222\n222\n222\n222\n", height: 4, width: 8, x: 0, y: 0 )
+      # p.notes.create( content: "222\n222\n222\n222\n", height: 4, width: 8, x: 0, y: 4 )
+      #
+      # p = Page.create( title: 'your third page' )
+      # p.notes.create( content: "333\n333\n333\n333\n", height: 4, width: 8, x: 0, y: 0 )
+      # p.notes.create( content: "333\n333\n333\n333\n", height: 4, width: 8, x: 0, y: 4 )
     end
 
     save

@@ -39,7 +39,7 @@ class MainWindowController < NSWindowController
     @title_view.cell.stringValue = current_page.title
 
     self.notes.each do | note |
-      @layout.add_note_view( note, self )
+      @layout.add_note( note, self )
     end
   end
 
@@ -110,7 +110,7 @@ class MainWindowController < NSWindowController
   def toolbar( toolbar, itemForItemIdentifier: identifier, willBeInsertedIntoToolbar: flag )
     if identifier == TITLE_FIELD
       item          = NSToolbarItem.alloc.initWithItemIdentifier(identifier)
-      @title_view   = NSTextField.alloc.initWithFrame(NSZeroRect)
+      @title_view   = MyTextField.alloc.initWithFrame(NSZeroRect)
 
       @title_view.target   = self
       @title_view.action   = :"toolbarSearch:"
@@ -270,7 +270,7 @@ class MainWindowController < NSWindowController
 
     reposition( note )
 
-    %w( splitH splitV ).each_with_index do | action, index |
+    %w( splitH splitV merge ).each_with_index do | action, index |
       buttonV = layout.button_view( note, action )
       buttonV.setFrameOrigin( NSMakePoint( size_for( note )[ 0 ] - ( 40 * index ) - 40,
                                            0 ) )
@@ -283,10 +283,56 @@ class MainWindowController < NSWindowController
     post_split_actions( new_note )
   end
 
+  def merge( merge_from )
+    # sort them to be consistent
+    # merge_to = notes.sort_by{ | n | n.x > merge_from.x }.detect do | n |
+    merge_to = notes.detect do | n |
+      mp "merge_from #{ merge_from.to_debug_position }"
+      mp "n          #{ n.to_debug_position }"
+      mp '--------------------------------------------'
+
+      merge_from.x + merge_from.width  == n.x && n.height == merge_from.height && merge_from.y == n.y ||
+      merge_from.x - merge_from.width  == n.x && n.height == merge_from.height && merge_from.y == n.y ||
+
+      merge_from.y - merge_from.height == n.y && n.width  == merge_from.width  && merge_from.x == n.x ||
+      merge_from.y + merge_from.height == n.y && n.width  == merge_from.width  && merge_from.x == n.x
+    end
+
+    mp "FOUND = #{merge_to.to_debug_position}"
+
+    if (merge_to)
+      if merge_from.height && merge_from.y == merge_to.y
+        if merge_to.x < merge_from.x
+          merge_to.width += merge_from.width
+        else
+          merge_to.width += merge_from.width
+          merge_to.x     -= merge_from.width
+        end
+      elsif merge_from.width && merge_from.x == merge_to.x
+        if merge_to.y < merge_from.y
+          merge_to.height += merge_from.height
+        else
+          merge_to.height += merge_from.height
+          merge_to.y      -= merge_from.height
+        end
+      end
+
+      mp "width.........#{ merge_to.width }"
+      mp "    x.........#{ merge_to.x }"
+
+      layout.remove_note(merge_from)
+      merge_from.destroy
+      save
+
+      reposition(merge_to)
+
+      select_note(merge_to)
+    end
+  end
 
 
   def post_split_actions( new_note )
-    layout.add_note_view( new_note, self )
+    layout.add_note( new_note, self )
 
     select_note( new_note )
 
@@ -306,6 +352,21 @@ class MainWindowController < NSWindowController
   def reposition( note )
     layout.scroller_view( note ).setFrameSize(   size_for(   note ) )
     layout.scroller_view( note ).setFrameOrigin( origin_for( note ) )
+
+    layout.text_view( note ).setFrameSize(   size_for(   note ) )
+
+    layout.buttons_view(note).setFrameSize(NSMakeSize(size_for(note).width,
+                                                       40))
+
+    layout.buttons_view( note ).setFrameOrigin( NSMakePoint( 0,
+                                                             size_for( note )[ 1 ] - 40 ) )
+
+    %w( splitH splitV merge ).each_with_index do | action, index |
+      buttonV = layout.button_view( note, action )
+      buttonV.setFrameOrigin( NSMakePoint( size_for( note )[ 0 ] - ( 40 * index ) - 40,
+                                           0 ) )
+    end
+
   end
 
   def create_note( attributes )

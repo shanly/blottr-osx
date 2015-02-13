@@ -28,4 +28,8 @@ class Note < CDQManagedObject
     "button_view_#{ self.note_view_ui_name }".to_sym
   end
 
+  def to_debug_position
+    "#{ object_id } | x: #{ x }, y: #{ y } - height: #{ height }, width: #{ width }"
+  end
+
 end

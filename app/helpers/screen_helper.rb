@@ -1,18 +1,18 @@
 module ScreenHelper
 
-  MENU_HEIGHT     = 22
+  MENU_HEIGHT = 22
 
-  SIZE            = 0.9
+  SIZE        = 0.9
 
   def screen_width
-    @screen_width = 800
-    # @screen_width ||= NSScreen.mainScreen.frame.size.width * SIZE
+    # @screen_width ||= 800
+    @screen_width ||= NSScreen.mainScreen.frame.size.width * SIZE
     # NSScreen.mainScreen.frame.size.width * SIZE
   end
 
   def screen_height
-    @screen_height = 800
-    # @screen_height ||= ( NSScreen.mainScreen.frame.size.height * SIZE )# - TITLE_HEIGHT
+    # @screen_height ||= 800
+    @screen_height ||= ( NSScreen.mainScreen.frame.size.height * SIZE )# - TITLE_HEIGHT
     # ( NSScreen.mainScreen.frame.size.height * SIZE ) - MENU_HEIGHT
   end
 

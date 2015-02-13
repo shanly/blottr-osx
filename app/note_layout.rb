@@ -34,7 +34,7 @@ class NoteLayout < MyWindowLayout#MotionKit::WindowLayout
         textContainer.setWidthTracksTextView      false
 
         note      @note
-        setString @note.content # does not take otherwise
+        setString @note.to_debug_position#content # does not take otherwise
 
         text_view_styles 'theme' => theme
 
@@ -44,7 +44,10 @@ class NoteLayout < MyWindowLayout#MotionKit::WindowLayout
         frame           [ [ 0,         size[ 1 ] - 40 ],
                           [ size[ 0 ], 40 ] ]
 
-        %w( splitH splitV ).each_with_index do | action, index |
+        setWantsLayer             true
+        layer.setBackgroundColor '#ff00ff'.cgcolor
+
+        %w( splitH splitV merge ).each_with_index do | action, index |
 
           add MyButton, "#{ action }_button"  do
             frame           [ [ size[ 0 ] - ( 40 * index ) - 40, 0 ],
@@ -77,6 +80,10 @@ class NoteLayout < MyWindowLayout#MotionKit::WindowLayout
 
   def splitV
     @delegate.splitV( @note )
+  end
+
+  def merge
+    @delegate.merge( @note )
   end
 
   def button_style( note, action )
