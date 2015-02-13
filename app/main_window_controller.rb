@@ -72,13 +72,24 @@ class MainWindowController < NSWindowController
   end
 
   def new_page( arg )
-    page = Page.create( title: 'your new page' )
+    new_page = Page.create( title:         'your new page',
+                            next_page:     NextPage.create,
+                            previous_page: PreviousPage.create )
 
-    self.pages << page
+    new_page.next_page.page     = current_page.next_page.page
+    new_page.previous_page.page = current_page
 
+    new_page.notes.create( content: 'start your notes here', height: 8, width: 8, x: 0, y: 0 )
 
+    current_page.next_page.page.previous_page.page = new_page
+    current_page.next_page.page = new_page
+
+    self.current_page = new_page
 
     save
+
+    clear_current_page
+    display_current_page
   end
 
 
