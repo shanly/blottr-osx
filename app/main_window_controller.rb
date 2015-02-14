@@ -49,7 +49,7 @@ class MainWindowController < NSWindowController
 
   def load_pages
     self.pages        = PersistenceService.load_pages
-    self.current_page = self.pages[ 0 ]
+    self.current_page = self.pages.detect { | p | p.page_marker }
   end
 
   def notes
@@ -113,6 +113,8 @@ class MainWindowController < NSWindowController
 
 
   def show_window
+    PersistenceService.backup
+
     layout.show_window
   end
 

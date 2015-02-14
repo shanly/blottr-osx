@@ -10,6 +10,10 @@ class PersistenceService
     @instance.save
   end
 
+  def self.backup
+    @instance.backup
+  end
+
   def self.init
     @instance ||= PersistenceService.new
   end
@@ -45,7 +49,7 @@ class PersistenceService
 
   def ensure_starting_page
     if Page.all.size == 0
-      p1 = Page.create(title: 'your first page')
+      p1 = Page.create(title: 'your first page', page_marker: true )
       p1.notes.create(content: "111\n111\n111\n111\n111\n111\n", height: 8, width: 2, x: 0, y: 0)
       p1.notes.create(content: "111\n111\n111\n111\n111\n111\n", height: 8, width: 2, x: 2, y: 0)
       p1.notes.create(content: "111\n111\n111\n111\n111\n111\n", height: 8, width: 2, x: 4, y: 0)
@@ -79,7 +83,7 @@ class PersistenceService
     # mp App.documents_path
 
     # File.join(App.documents_path, "backup-#{ Time.now.to_i }.xml")
-    File.join(App.documents_path, "backup-#{ Time.now.to_i }.json")
+    File.join(App.documents_path, "blottr-backup-#{ Time.now.to_i }.json")
   end
 
   def backup

@@ -4,6 +4,8 @@ schema '0001 initial' do
   entity 'Page' do
     string :title
 
+    boolean :page_marker
+
     has_many :notes
 
     belongs_to :next_page
