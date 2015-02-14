@@ -16,7 +16,7 @@ class MainWindowLayout < MyWindowLayout
   def window_style
     title               App.name
     styleMask           NSTitledWindowMask
-    background_color    MyConstants::HIGHLIGHT_COLOR.nscolor
+    background_color    MyConstants::BORDER_COLOR.nscolor
 
     setOpaque           false
     alpha_value         0.75
