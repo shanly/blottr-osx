@@ -2,12 +2,13 @@ class MainWindowController < NSWindowController
 
 
 
-  NEXT_BUTTON     = 'next_page'
-  PREV_BUTTON     = 'previous_page'
-  NEW_PAGE_BUTTON = 'new_page'
-  TITLE_FIELD     = 'title'
+  NEXT_BUTTON         = 'next_page'
+  PREV_BUTTON         = 'previous_page'
+  NEW_PAGE_BUTTON     = 'new_page'
+  DELETE_PAGE_BUTTON  = 'delete_page'
+  TITLE_FIELD         = 'title'
 
-  MENU_BUTTONS = [ NEXT_BUTTON, PREV_BUTTON, NEW_PAGE_BUTTON ]
+  MENU_BUTTONS = [ NEXT_BUTTON, PREV_BUTTON, DELETE_PAGE_BUTTON, NEW_PAGE_BUTTON ]
 
   MENU_DEFINITIONS = {
     NEXT_BUTTON => {
@@ -22,8 +23,13 @@ class MainWindowController < NSWindowController
     },
     NEW_PAGE_BUTTON => {
       # icon: "\ue763",
-      icon: 'next.png',
+      icon: 'new_page.png',
       action: 'new_page:'
+    },
+    DELETE_PAGE_BUTTON => {
+        # icon: "\ue763",
+        icon: 'delete_page.png',
+        action: 'delete_page:'
     },
   }
 
@@ -83,11 +89,14 @@ class MainWindowController < NSWindowController
 
 
   def toolbarAllowedItemIdentifiers(toolbar)
-    [ NEXT_BUTTON, PREV_BUTTON, NEW_PAGE_BUTTON, TITLE_FIELD, NSToolbarFlexibleSpaceItemIdentifier, NSToolbarSpaceItemIdentifier, NSToolbarShowFontsItemIdentifier, NSToolbarShowColorsItemIdentifier ]
+    [ NEXT_BUTTON, PREV_BUTTON, DELETE_PAGE_BUTTON, NEW_PAGE_BUTTON, TITLE_FIELD,
+      NSToolbarFlexibleSpaceItemIdentifier, NSToolbarSpaceItemIdentifier, NSToolbarShowFontsItemIdentifier, NSToolbarShowColorsItemIdentifier ]
   end
 
   def toolbarDefaultItemIdentifiers(toolbar)
-    [ PREV_BUTTON, NEXT_BUTTON, NSToolbarFlexibleSpaceItemIdentifier, TITLE_FIELD, NSToolbarFlexibleSpaceItemIdentifier, NEW_PAGE_BUTTON ]
+    [ PREV_BUTTON, NEXT_BUTTON,
+      NSToolbarFlexibleSpaceItemIdentifier, TITLE_FIELD, NSToolbarFlexibleSpaceItemIdentifier,
+      DELETE_PAGE_BUTTON, NEW_PAGE_BUTTON ]
   end
 
   def icon( icon )

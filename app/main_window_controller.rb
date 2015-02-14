@@ -92,6 +92,28 @@ class MainWindowController < NSWindowController
     display_current_page
   end
 
+  def delete_page( arg )
+    # todo dont allow last page to be deleted
+    return if current_page.previous_page.page == self.current_page
+
+    previous_page = current_page.previous_page.page
+    next_page     = current_page.next_page.page
+
+    previous_page.next_page.page = next_page
+    next_page.previous_page.page = previous_page
+
+    self.current_page.next_page.destroy
+    self.current_page.previous_page.destroy
+    self.current_page.destroy
+
+    self.current_page = next_page
+
+    save
+
+    clear_current_page
+    display_current_page
+  end
+
 
   def start_saving_timer
     5.second.every do
