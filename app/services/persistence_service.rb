@@ -77,14 +77,14 @@ class PersistenceService
     p3.notes.create(content: "333\n333\n333\n333\n", height: 2, width: 8, x: 0, y: 4)
     p3.notes.create(content: "333\n333\n333\n333\n", height: 2, width: 8, x: 0, y: 6)
 
-    p1.next_page      = NextPage.create( page: p2 )
-    p1.previous_page  = PreviousPage.create( page: p3 )
+    p1.next_page     = NextPage.create( page: p2 )
+    p1.previous_page = PreviousPage.create( page: p3 )
 
-    p2.next_page      = NextPage.create( page: p3 )
-    p2.previous_page  = PreviousPage.create( page: p1 )
+    p2.next_page     = NextPage.create( page: p3 )
+    p2.previous_page = PreviousPage.create( page: p1 )
 
-    p3.next_page      = NextPage.create( page: p1 )
-    p3.previous_page  = PreviousPage.create( page: p2 )
+    p3.next_page     = NextPage.create( page: p1 )
+    p3.previous_page = PreviousPage.create( page: p2 )
   end
 
   def backup_path
