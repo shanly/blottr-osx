@@ -46,7 +46,7 @@ class PersistenceService
 
   def ensure_starting_page
     if Page.all.size == 0
-      start_data
+      test_data
     end
 
     save

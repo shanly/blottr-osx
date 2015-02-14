@@ -12,12 +12,7 @@ class MainWindowController < NSWindowController
 
       window.setDelegate( self )
 
-      # Create and add toolbar.
-      toolbar = NSToolbar.alloc.initWithIdentifier( 'MyToolbar' )
-      toolbar.allowsUserCustomization = true
-      toolbar.displayMode             = NSToolbarDisplayModeIconOnly
-      toolbar.delegate                = self
-      window.toolbar                  = toolbar
+      create_toolbar
 
       load_pages
 
@@ -30,9 +25,12 @@ class MainWindowController < NSWindowController
       register_keyboard_listener
 
       start_saving_timer
-
-      # layout.to_debug
     end
+  end
+
+  def update_display
+    clear_current_page
+    display_current_page
   end
 
   def display_current_page
@@ -57,19 +55,26 @@ class MainWindowController < NSWindowController
   end
 
 
+
+
+
   def next_page( arg )
     self.current_page = self.current_page.next_page.page
 
-    clear_current_page
-    display_current_page
+    update_display
   end
 
   def previous_page( arg )
     self.current_page = self.current_page.previous_page.page
 
-    clear_current_page
-    display_current_page
+    update_display
   end
+
+
+  def book
+    Book.new( self.current_page )
+  end
+
 
   def new_page( arg )
     new_page = Page.create( title:         'your new page',
@@ -88,12 +93,10 @@ class MainWindowController < NSWindowController
 
     save
 
-    clear_current_page
-    display_current_page
+    update_display
   end
 
   def delete_page( arg )
-    # todo dont allow last page to be deleted
     return if current_page.previous_page.page == self.current_page
 
     previous_page = current_page.previous_page.page
@@ -110,8 +113,7 @@ class MainWindowController < NSWindowController
 
     save
 
-    clear_current_page
-    display_current_page
+    update_display
   end
 
 

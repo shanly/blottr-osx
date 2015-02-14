@@ -1,5 +1,7 @@
 class MyWindow < NSWindow
 
+  attr_accessor :text_view
+
   include ScreenHelper
 
   def canBecomeKeyWindow
@@ -41,6 +43,8 @@ class MyWindow < NSWindow
       end
 
       highlightTextView( responder )
+
+      self.text_view = responder
     end
   end
 
