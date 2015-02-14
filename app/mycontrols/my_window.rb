@@ -33,18 +33,26 @@ class MyWindow < NSWindow
     NSFrameRectWithWidth( rect, MyConstants::DIVIDERx1 )
   end
 
+  def text_views
+    contentView.subviews.first.subviews
+  end
+
   def makeFirstResponder( responder )
     super
 
     if responder.class == MyTextView
-      contentView.subviews.each do | v |
-        drawRectangle( adjustedRectangle( v.frame ),
-                       MyConstants::BORDER_COLOR.nscolor )
-      end
+      draw_borders
 
       highlightTextView( responder )
 
       self.text_view = responder
+    end
+  end
+
+  def draw_borders
+    text_views.each do | v |
+      drawRectangle( adjustedRectangle( v.frame ),
+                     MyConstants::BORDER_COLOR.nscolor )
     end
   end
 
